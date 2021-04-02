@@ -1,7 +1,9 @@
-import { createStore, combineReducers, applyMiddleware } from 'redux'
+import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
 
 import reducers from './reducers'
+
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 
 export default createStore(
   combineReducers(reducers),
@@ -11,9 +13,10 @@ export default createStore(
     isCitySelectorVisible: false,
     currentSelectingLeftCity: false,
     cityData: null,
+    departDate: Date.now(),
     isLoadingCityData: false,
     isDateSelectorVisible: false,
     highSpeed: false
   },
-  applyMiddleware(thunk)
+  composeEnhancers(applyMiddleware(thunk))
 )

@@ -7,6 +7,7 @@ export const ACTION_SET_CITYDATA = 'SET_CITYDATA'
 export const ACTION_SET_ISLOADINGCITYDATA = 'SET_ISLOADINGCITYDATA'
 export const ACTION_SET_ISDATESELECTORVISIBLE = 'SET_ISDATESELECTORVISIBLE'
 export const ACTION_SET_HIGHSPEED = 'SET_HIGHSPEED'
+export const ACTION_SET_DEPART_DATE = 'SET_DEPART_DATE'
 
 export const setFrom = from => {
   return {
@@ -137,5 +138,12 @@ export const fetchCityData = () => {
       .catch(() => {
         dispatch(setIsLoadingCityData(false))
       })
+  }
+}
+
+export function setDepartDate(departDate) {
+  return {
+    type: ACTION_SET_DEPART_DATE,
+    payload: departDate
   }
 }

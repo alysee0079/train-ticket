@@ -9,14 +9,20 @@ import HighSpeed from './HighSpeed'
 import Journey from './Journey'
 import Submit from './Submit'
 import CitySelector from '../common/CitySelector'
+import DateSelector from '../common/DateSelector'
 
 import {
   exchangeFromTo,
   showCitySelector,
   hideCitySelector,
   fetchCityData,
-  setSelectorCity
+  setSelectorCity,
+  showDateSelector,
+  hideDateSelector,
+  setDepartDate,
+  toggleHighSpeed
 } from './actions'
+import { h0 } from '../common/fp'
 
 const App = memo(function(props) {
   const {
@@ -25,7 +31,10 @@ const App = memo(function(props) {
     dispatch,
     isCitySelectorVisible,
     cityData,
-    isLoadingCityData
+    isLoadingCityData,
+    departDate,
+    isDateSelectorVisible,
+    highSpeed
   } = props
   const onBack = useCallback(() => {
     window.history.back()
@@ -55,13 +64,38 @@ const App = memo(function(props) {
       dispatch
     )
   }, [])
+  const departDateCbs = useMemo(() => {
+    return bindActionCreators(
+      {
+        onClick: showDateSelector
+      },
+      dispatch
+    )
+  }, [])
+  const dateSelectorCbs = useMemo(() => {
+    return bindActionCreators(
+      {
+        onBack: hideDateSelector
+      },
+      dispatch
+    )
+  }, [])
+  const highSpeedCbs = useMemo(() => {
+    return bindActionCreators({ toggle: toggleHighSpeed }, dispatch)
+  }, [])
+
+  const onSelectDate = useCallback(day => {
+    if (!day || day < h0()) return
+    dispatch(setDepartDate(day))
+    dispatch(hideDateSelector())
+  }, [])
 
   return (
     <>
       <div className="header-wrapper">
         <Header title="title" onBack={onBack} />
       </div>
-      <form action="" className="form">
+      <form action="./query.html" className="form">
         <Journey
           from={from}
           to={to}
@@ -69,8 +103,8 @@ const App = memo(function(props) {
           // exchangeFromTo={doExchangeFromTo}
           // showCitySelector={doShowCitySelector}
         />
-        <DepartDate />
-        <HighSpeed />
+        <DepartDate time={departDate} {...departDateCbs} />
+        <HighSpeed highSpeed={highSpeed} {...highSpeedCbs} />
         <Submit />
       </form>
       <CitySelector
@@ -78,6 +112,11 @@ const App = memo(function(props) {
         cityData={cityData}
         isLoading={isLoadingCityData}
         {...citySelectorCbs}
+      />
+      <DateSelector
+        show={isDateSelectorVisible}
+        {...dateSelectorCbs}
+        onSelect={onSelectDate}
       />
     </>
   )
